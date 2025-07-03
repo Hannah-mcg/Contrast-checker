@@ -11,18 +11,44 @@
     <title>Contrast checker</title>
 </head>
 
-<body>
+<body onload="init()">
     <span id="heading">
         <h1>Colour palette tester</h1>
         <span id="colourInputs">
             <input type="color">
             <input type="color">
         </span>
+
+        <div id="pastePaletteWrapper">
+            <span>
+                Paste your colour palette:
+
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="#ffffff"
+                    stroke="#c0c0c0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-info-icon lucide-info" id="infoIcon">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 16v-4" />
+                    <path d="M12 8h.01" />
+                </svg>
+
+                <div id="info">
+                    At present the paste function only supports HEX, RGB and HSL colour formats<br>
+                    Each colour must be on it's own line<br>
+                    The contrast checker does not support transparency, as such, RGBA and HSLA colour formats as well as
+                    HEX codes longer than 6 characters (or 7 if including the '#') will not work<br>
+                    RGB and HSL colours must be in the format rgb(r, g, b) or hsl(h, s, l)<br>
+                    Make sure there are no extra characters at the end of each line (e.g. commas, semi-colons, etc.)
+                </div>
+            </span>
+            <textarea placeholder="Enter colours with each colour on a new line"></textarea>
+        </div>
+
         <span>
             <button onclick="addColour()">Add colour</button>
             <button onclick="checkContrast()">Check contrast</button>
             <button onclick="showCompCols()" id="showCols" class="hidden">Show compliant colours</button>
             <button onclick="removeColour()" id="removeCol" disabled>Remove colour</button>
+            <button onclick="showTextBox()">Paste colour palette</button>
         </span>
     </span>
     <span id="result"></span>

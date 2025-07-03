@@ -11,10 +11,16 @@ body
     font-family: 'Fanwood Text', serif;
 }
 
+::selection
+{
+    background-color: #e5e5e5;
+}
+
 button
 {
     cursor: pointer;
     transition: 0.4s;
+    background-color: #f0f0f0;
 }
 
 button.hidden
@@ -30,7 +36,7 @@ button:disabled
 
 button:hover:not(:disabled)
 {
-    background-color: rgb(200, 200, 200);
+    background-color: #e5e5e5;
     transition: 0.4s;
 }
 
@@ -68,6 +74,60 @@ h1
     gap: 10px;
 }
 
+#pastePaletteWrapper
+{
+    display: flex;
+    flex-direction: column;
+    font-family: 'Fira Sans', sans-serif;
+    align-self: stretch;
+    align-items: center;
+    overflow: hidden;
+    gap: 10px;
+    padding: 10px;
+
+    span
+    {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        #info
+        {
+            position: absolute;
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 14px;
+            width: 20%;
+            pointer-events: none;
+            opacity: 0;
+            transition: 0.3s;
+            line-height: 25px;
+        }
+
+        svg:hover
+        {
+            cursor: pointer;
+
+            &+#info
+            {
+                opacity: 1;
+                transition: 0.3s;
+            }
+        }
+    }
+
+    textarea
+    {
+        width: 20%;
+    }
+
+    &.hidden
+    {
+        display: none;
+    }
+}
+
 #result
 {
     display: flex;
@@ -103,8 +163,13 @@ input[type="color"]
     align-items: center;
     gap: 8px;
     flex-shrink: 0;
-    border-radius: 100px;
     border: none;
+    background: none;
+
+    &:hover
+    {
+        cursor: pointer;
+    }
 }
 
 ::-webkit-color-swatch

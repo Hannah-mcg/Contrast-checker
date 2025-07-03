@@ -1,5 +1,110 @@
-var colInputs = document.getElementById("colourInputs");
-var results = document.getElementById("result");
+const getElementById = id => document.getElementById(id);
+
+const colInputs = getElementById("colourInputs");
+const results = getElementById("result");
+const header = getElementById("heading");
+const colorText = document.getElementsByTagName("textarea")[0];
+
+window.onscroll = () =>
+{
+    if (window.scrollY > header.offsetTop)
+    {
+        header.classList.add("sticky");
+    } else
+    {
+        header.classList.remove("sticky");
+    }
+};
+
+colorText.addEventListener('input', (e) =>
+{
+    let colourString = e.target.value;
+
+    let colours = colourString.split('\n').map((x) =>
+    {
+        return x.trim();
+    });
+
+    colInputs.innerHTML = "";
+    colours.forEach((colour) =>
+    {
+        let format = detectColourFormat(colour);
+        if (format != '')
+        {
+            if (format == 'HEX' && !colour.startsWith('#'))
+            {
+                colour = `#${colour}`;
+            }
+            else if (format == 'RGB')
+            {
+                [r, g, b] = colour.slice(4, -1).split(',').map((x) => parseInt(x.trim()));
+                colour = RGBToHex(r, g, b);
+            }
+            else if (format == 'HSL')
+            {
+                [h, s, l] = colour.slice(4, -1).replace('%', '').split(',').map((x) => parseInt(x.trim()));
+                colour = HSLToHex(h, s, l);
+            }
+
+            let input = document.createElement("input");
+            input.type = "color";
+            input.value = colour;
+            colInputs.append(input);
+        }
+    })
+
+    let i = colInputs.getElementsByTagName('input').length;
+    if (i > 2)
+    {
+        getElementById("removeCol").disabled = false;
+    }
+    else if (i == 0)
+    {
+        for (let i = 0; i < 2; i++)
+        {
+            let input = document.createElement('input');
+            input.type = "color";
+            input.value = "#000";
+            colInputs.append(input);
+        }
+    }
+    else
+    {
+        getElementById("removeCol").disabled = true;
+    }
+})
+
+function init() 
+{
+    colorText.value = '';
+
+    let rect = getElementById("infoIcon").getBoundingClientRect();
+    colorText.parentElement.classList.add('hidden');
+
+    const infoPopover = getElementById("info");
+    infoPopover.style.top = `${rect.top}px`;
+    infoPopover.style.left = `${rect.left + 30}px`;
+}
+
+function detectColourFormat(colour)
+{
+    if (/^#?([0-9A-F]{3}){1,2}$/i.test(colour))
+    {
+        return 'HEX';
+    }
+    else if (/^rgb\((\d{1,3},\s*){2}\d{1,3}\)$/i.test(colour))
+    {
+        return 'RGB';
+    }
+    else if (/^hsl\(\d{1,3},\s*\d{1,3}%?,\s*\d{1,3}%?\)$/i.test(colour))
+    {
+        return 'HSL';
+    }
+    else
+    {
+        return '';
+    }
+}
 
 function addColour()
 {
@@ -10,18 +115,18 @@ function addColour()
     let i = colInputs.getElementsByTagName('input').length - 1;
     if (i + 1 > 2)
     {
-        document.getElementById("removeCol").disabled = false;
+        getElementById("removeCol").disabled = false;
     }
     else
     {
-        document.getElementById("removeCol").disabled = true;
+        getElementById("removeCol").disabled = true;
     }
 }
 
 function checkContrast()
 {
     results.innerHTML = "";
-    document.getElementById("showCols").classList.remove("hidden");
+    getElementById("showCols").classList.remove("hidden");
     var inputs = colInputs.getElementsByTagName("input");
     var palette = [];
     var contrast = [];
@@ -101,13 +206,13 @@ function showCompCols()
         }
     }
 
-    if (document.getElementById("showCols").innerHTML.includes("compliant"))
+    if (getElementById("showCols").innerHTML.includes("compliant"))
     {
-        document.getElementById("showCols").innerHTML = "Show all colours";
+        getElementById("showCols").innerHTML = "Show all colours";
     }
     else
     {
-        document.getElementById("showCols").innerHTML = "Show compliant colours";
+        getElementById("showCols").innerHTML = "Show compliant colours";
     }
 }
 
@@ -124,6 +229,19 @@ function hexToRGB(hex)
 function RGBToHex(r, g, b)
 {
     return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1);
+}
+
+function HSLToHex(h, s, l)
+{
+    l /= 100;
+    const a = s * Math.min(l, 1 - l) / 100;
+    const f = n =>
+    {
+        const k = (n + h / 30) % 12;
+        const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+        return Math.round(255 * color).toString(16).padStart(2, '0');   // convert to Hex and prefix "0" if needed
+    };
+    return `#${f(0)}${f(8)}${f(4)}`;
 }
 
 function luminance(r, g, b)
@@ -148,23 +266,6 @@ function guidelines(ratio)
     }
 }
 
-window.onscroll = function() { myFunction() };
-
-var header = document.getElementById("heading");
-
-var sticky = header.offsetTop;
-
-function myFunction()
-{
-    if (window.scrollY > sticky)
-    {
-        header.classList.add("sticky");
-    } else
-    {
-        header.classList.remove("sticky");
-    }
-}
-
 function removeColour()
 {
     let i = colInputs.getElementsByTagName('input').length - 1;
@@ -175,11 +276,17 @@ function removeColour()
 
         if (i + 1 <= 2)
         {
-            document.getElementById("removeCol").disabled = true;
+            getElementById("removeCol").disabled = true;
         }
         else
         {
-            document.getElementById("removeCol").disabled = false;
+            getElementById("removeCol").disabled = false;
         }
     }
 }
+
+function showTextBox()
+{
+    colorText.parentElement.classList.toggle('hidden');
+}
+
